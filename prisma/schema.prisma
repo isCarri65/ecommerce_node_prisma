@@ -1,0 +1,196 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id               Int               @id @default(autoincrement())
+  deleted          Boolean           @default(false)
+  name             String
+  buyPrice         Float
+  sellPrice        Float
+  description      String?
+  state            Boolean
+  genre            ProductGenreENUM
+  favorites        Favorite[]
+  galleryProducts  GalleryProduct[]
+  productDiscounts ProductDiscount[]
+  productVariants  ProductVariant[]
+  categories       Category[]        @relation("ProductCategories")
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  deleted   Boolean   @default(false)
+  name      String
+  galleryId Int?      @unique
+  gallery   Gallery?  @relation(fields: [galleryId], references: [id])
+  types     Type[]    @relation("CategoryTypes")
+  products  Product[] @relation("ProductCategories")
+}
+
+model Gallery {
+  id       Int       @id @default(autoincrement())
+  deleted  Boolean   @default(false)
+  image    String
+  category Category?
+}
+
+model Type {
+  id         Int        @id @default(autoincrement())
+  deleted    Boolean    @default(false)
+  name       String
+  categories Category[] @relation("CategoryTypes")
+}
+
+model User {
+  id        Int             @id @default(autoincrement())
+  deleted   Boolean         @default(false)
+  name      String
+  lastName  String?
+  birthDate DateTime?
+  email     String          @unique
+  password  String
+  role      Role
+  addresses Address[]
+  favorites Favorite[]
+  orders    PurchaseOrder[]
+}
+
+model Discount {
+  id                   Int                   @id @default(autoincrement())
+  deleted              Boolean               @default(false)
+  startDate            DateTime
+  endDate              DateTime
+  percentage           Float
+  state                Boolean
+  productDiscounts     ProductDiscount[]
+  purchaseOrderDetails PurchaseOrderDetail[]
+}
+
+model GalleryProduct {
+  id        Int     @id @default(autoincrement())
+  deleted   Boolean @default(false)
+  image     String
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model ProductVariant {
+  id                   Int                   @id @default(autoincrement())
+  deleted              Boolean               @default(false)
+  quantity             Int
+  state                Boolean
+  productId            Int
+  sizeId               Int
+  colorId              Int
+  color                Color                 @relation(fields: [colorId], references: [id])
+  product              Product               @relation(fields: [productId], references: [id])
+  size                 Size                  @relation(fields: [sizeId], references: [id])
+  purchaseOrderDetails PurchaseOrderDetail[]
+}
+
+model Size {
+  id       Int              @id @default(autoincrement())
+  deleted  Boolean          @default(false)
+  name     String
+  sizeType SizeTypeENUM
+  variants ProductVariant[]
+}
+
+model Address {
+  id                Int             @id @default(autoincrement())
+  deleted           Boolean         @default(false)
+  street            String
+  number            Int
+  apartment         String?
+  aptNumberAndFloor String?
+  province          String
+  locality          String
+  postal            String
+  userId            Int
+  user              User            @relation(fields: [userId], references: [id])
+  orders            PurchaseOrder[]
+}
+
+model Color {
+  id       Int              @id @default(autoincrement())
+  deleted  Boolean          @default(false)
+  name     String
+  variants ProductVariant[]
+}
+
+model PurchaseOrder {
+  id            Int                    @id @default(autoincrement())
+  deleted       Boolean                @default(false)
+  date          DateTime
+  finalPrice    Float
+  paymentMethod String
+  userId        Int
+  addressId     Int
+  state         PurchaseOrderStateENUM
+  address       Address                @relation(fields: [addressId], references: [id])
+  user          User                   @relation(fields: [userId], references: [id])
+  details       PurchaseOrderDetail[]
+}
+
+model PurchaseOrderDetail {
+  id               Int            @id @default(autoincrement())
+  deleted          Boolean        @default(false)
+  quantity         Int
+  unitPrice        Float
+  totalPrice       Float
+  purchaseOrderId  Int
+  productVariantId Int
+  discountId       Int?
+  discount         Discount?      @relation(fields: [discountId], references: [id])
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
+  purchaseOrder    PurchaseOrder  @relation(fields: [purchaseOrderId], references: [id])
+}
+
+model ProductDiscount {
+  id         Int      @id @default(autoincrement())
+  deleted    Boolean  @default(false)
+  state      Boolean
+  productId  Int
+  discountId Int
+  discount   Discount @relation(fields: [discountId], references: [id])
+  product    Product  @relation(fields: [productId], references: [id])
+}
+
+model Favorite {
+  id        Int     @id @default(autoincrement())
+  deleted   Boolean @default(false)
+  userId    Int
+  productId Int
+  state     Boolean
+  product   Product @relation(fields: [productId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
+}
+
+enum ProductGenreENUM {
+  MALE
+  FEMALE
+  UNISEX
+  CHILDREN
+}
+
+enum SizeTypeENUM {
+  NUMBER
+  LETTER
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum PurchaseOrderStateENUM {
+  PAID
+  SHIPPED
+  DELIVERED
+}
