@@ -1,4 +1,9 @@
 import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import authRoutes from "./routes/authRoute";
+import { errorHandler } from "./middlewares/errorHandler";
+
 import userRoute from "./routes/UserRoute";
 import { PrismaClient } from "@prisma/client";
 import categoryRoute from "./routes/CategoryRoute";
@@ -15,10 +20,12 @@ import purchaseOrderDetailRoute from "./routes/PurchaseOrderDetailRoute";
 import sizeRoute from "./routes/SizeRoute";
 import typeRoute from "./routes/TypeRoute";
 
-export const createServer = (options: { port: number; path: string }) => {
+export const createServer = (options: any) => {
   const prisma = new PrismaClient();
   const app = express();
 
+  app.use(helmet());
+  app.use(cors());
   app.use(express.json());
 
   app.use("/users", userRoute);
@@ -35,6 +42,9 @@ export const createServer = (options: { port: number; path: string }) => {
   app.use("/purchaseOrderDetails", purchaseOrderDetailRoute);
   app.use("/sizes", sizeRoute);
   app.use("/types", typeRoute);
+
+  app.use("/api/auth", authRoutes);
+  app.use(errorHandler);
   app.listen(options.port, () => {
     console.log(`server levantado en el puerto: ${options.port}`);
   });

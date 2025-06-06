@@ -59,6 +59,7 @@ model User {
   addresses Address[]
   favorites Favorite[]
   orders    PurchaseOrder[]
+  refreshTokens RefreshToken[]
 }
 
 model Discount {
@@ -193,4 +194,13 @@ enum PurchaseOrderStateENUM {
   PAID
   SHIPPED
   DELIVERED
+}
+
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 }
