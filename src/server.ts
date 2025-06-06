@@ -3,12 +3,14 @@ import cors from "cors";
 import helmet from "helmet";
 import authRoutes from "./routes/authRoute";
 import { errorHandler } from "./middlewares/errorHandler";
+import "./types/express";
 
-import userRoute from "./routes/UserRoute";
+import adminUserRoute from "./routes/admin/UserRoute";
+import userRoute from "./routes/user/UserRoute";
 import { PrismaClient } from "@prisma/client";
-import categoryRoute from "./routes/CategoryRoute";
+import categoryRoute from "./routes/public/CategoryRoute";
 import productRoute from "./routes/ProductRoute";
-import addressRoute from "./routes/AddressRoute";
+import addressRoute from "./routes/user/AddressRoute";
 import discountRoute from "./routes/DiscountRoute";
 import favoriteRoute from "./routes/FavoriteRoute";
 import galleryProductRoute from "./routes/GalleryProductRoute";
@@ -17,8 +19,10 @@ import productVariantRoute from "./routes/ProductVariantRoute";
 import productDiscountRoute from "./routes/ProductDiscountRoute";
 import purchaseOrderRoute from "./routes/PurchaseOrderRoute";
 import purchaseOrderDetailRoute from "./routes/PurchaseOrderDetailRoute";
-import sizeRoute from "./routes/SizeRoute";
-import typeRoute from "./routes/TypeRoute";
+import sizeRoute from "./routes/public/SizeRoute";
+import typeRoute from "./routes/public/TypeRoute";
+import { authenticate } from "./middlewares/auth.middleware";
+import { requireAdmin } from "./middlewares/requireAdmin";
 
 export const createServer = (options: any) => {
   const prisma = new PrismaClient();
@@ -28,7 +32,7 @@ export const createServer = (options: any) => {
   app.use(cors());
   app.use(express.json());
 
-  app.use("/users", userRoute);
+  //public routes
   app.use("/categories", categoryRoute);
   app.use("/products", productRoute);
   app.use("/addresses", addressRoute);
@@ -42,6 +46,11 @@ export const createServer = (options: any) => {
   app.use("/purchaseOrderDetails", purchaseOrderDetailRoute);
   app.use("/sizes", sizeRoute);
   app.use("/types", typeRoute);
+  //user routes
+  app.use("/user/users", authenticate, userRoute);
+
+  //admin routes
+  app.use("/admin/users", authenticate, requireAdmin, adminUserRoute);
 
   app.use("/api/auth", authRoutes);
   app.use(errorHandler);

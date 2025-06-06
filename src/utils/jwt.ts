@@ -3,9 +3,11 @@ dotenv.config();
 import jwt from "jsonwebtoken";
 import { envs } from "../config/env";
 import ms from "ms";
+import { Role } from "@prisma/client";
 export interface TokenPayload {
   userId: number;
   email: string;
+  role: Role;
 }
 export const generateAccessToken = (payload: TokenPayload): string => {
   console.log(envs.jwt.accessExpiration);

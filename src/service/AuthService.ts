@@ -39,7 +39,11 @@ export const registerService = async (
     throw new HttpError(500, "Error al crear el usuario");
   }
 
-  const payload: TokenPayload = { userId: user.id, email: user.email };
+  const payload: TokenPayload = {
+    userId: user.id,
+    email: user.email,
+    role: user.role,
+  };
   const accessToken = generateAccessToken(payload);
   const refreshToken = generateRefreshToken(payload);
 
@@ -60,7 +64,11 @@ export const loginService = async (email: string, password: string) => {
   const valid = await comparePasswords(password, user.password);
   if (!valid) throw new HttpError(401, "Credenciales inválidas");
 
-  const payload: TokenPayload = { userId: user.id, email: user.email };
+  const payload: TokenPayload = {
+    userId: user.id,
+    email: user.email,
+    role: user.role,
+  };
   const accessToken = generateAccessToken(payload);
   const refreshToken = generateRefreshToken(payload);
 
@@ -95,6 +103,7 @@ export const refreshTokenService = async (token: string) => {
   const newPayload: TokenPayload = {
     userId: payload.userId,
     email: payload.email,
+    role: payload.role,
   };
   const accessToken = generateAccessToken(newPayload);
   const newRefreshToken = generateRefreshToken(newPayload);

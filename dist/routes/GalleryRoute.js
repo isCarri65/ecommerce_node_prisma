@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const GalleryController_1 = require("../controllers/GalleryController");
+const router = (0, express_1.Router)();
+const galleryController = new GalleryController_1.GalleryController();
+router.get("/", (req, res) => galleryController.getAll(req, res));
+router.get("/:id", (req, res) => galleryController.getById(req, res));
+router.post("/", (req, res) => galleryController.create(req, res));
+router.put("/:id", (req, res) => galleryController.update(req, res));
+router.delete("/:id", (req, res) => galleryController.delete(req, res));
+exports.default = router;

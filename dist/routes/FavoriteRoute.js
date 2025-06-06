@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const FavoriteController_1 = require("../controllers/FavoriteController");
+const router = (0, express_1.Router)();
+const favoriteController = new FavoriteController_1.FavoriteController();
+router.get("/", (req, res) => favoriteController.getAll(req, res));
+router.get("/:id", (req, res) => favoriteController.getById(req, res));
+router.post("/", (req, res) => favoriteController.create(req, res));
+router.put("/:id", (req, res) => favoriteController.update(req, res));
+router.delete("/:id", (req, res) => favoriteController.delete(req, res));
+exports.default = router;

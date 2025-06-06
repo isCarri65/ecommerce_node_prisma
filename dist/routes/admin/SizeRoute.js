@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const SizeController_1 = require("../../controllers/SizeController");
+const router = (0, express_1.Router)();
+const sizeController = new SizeController_1.SizeController();
+router.post("/", (req, res) => sizeController.create(req, res));
+router.put("/:id", (req, res) => sizeController.update(req, res));
+router.delete("/:id", (req, res) => sizeController.delete(req, res));
+exports.default = router;
