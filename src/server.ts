@@ -6,11 +6,11 @@ import { errorHandler } from "./middlewares/errorHandler";
 import "./types/express";
 
 import adminUserRoute from "./routes/admin/UserRoute";
-import userRoute from "./routes/user/UserRoute";
+import userRoute from "./routes/protected/UserRoute";
 import { PrismaClient } from "@prisma/client";
 import categoryRoute from "./routes/public/CategoryRoute";
 import productRoute from "./routes/ProductRoute";
-import addressRoute from "./routes/user/AddressRoute";
+import addressRoute from "./routes/protected/AddressRoute";
 import discountRoute from "./routes/DiscountRoute";
 import favoriteRoute from "./routes/FavoriteRoute";
 import galleryProductRoute from "./routes/GalleryProductRoute";
