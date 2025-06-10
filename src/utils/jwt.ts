@@ -2,7 +2,6 @@ import dotenv from "dotenv";
 dotenv.config();
 import jwt from "jsonwebtoken";
 import { envs } from "../config/env";
-import ms from "ms";
 import { Role } from "@prisma/client";
 export interface TokenPayload {
   userId: number;
